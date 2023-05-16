@@ -7,18 +7,14 @@ from lxml import etree
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from fake_useragent import UserAgent
-from colorama import Fore, Back, Style
+from colorama import Fore, Style
+from settings import *
 import pandas as pd
 import requests
 import os
 import time
 import shutil
 import json
-
-SMALL_DELAY = 1
-MEDIUM_DELAY = 3
-BIG_DELAY = 6
-TARGET_WEBSITE = ""
 
 
 class GeneralSpider:
@@ -116,7 +112,7 @@ class GeneralSpider:
                 user_agent = self.driver.execute_script("return navigator.userAgent")
 
                 product_data_dict["key_1"] = "".join(self.dom.xpath(element_1)).replace("\\n",
-                                                                                                       "").strip() if len(
+                                                                                        "").strip() if len(
                     "".join(self.dom.xpath(element_1))) != 0 else "Not Found"
 
                 image_element = self.soup.find_all("img", {"<attribute>": "<selector>"})
@@ -220,26 +216,3 @@ class GeneralSpider:
                 cleaned_output_data_dict[key] = value
 
         return cleaned_output_data_dict
-
-
-if __name__ == "__main__":
-    start = time.time()
-
-    brand_to_scrape = input("For what keywords do you want to search on website?: ")
-    sig_spider = GeneralSpider(brand_to_scrape)
-    time.sleep(SMALL_DELAY)
-    sig_spider.write_to_search_input()
-    time.sleep(SMALL_DELAY)
-    data_dict = sig_spider.get_product_dataset()
-    time.sleep(SMALL_DELAY)
-    sig_spider.save_file_to_json(data_dict)
-    sig_spider.save_file_to_csv(data_dict)
-    time.sleep(SMALL_DELAY)
-    sig_spider.save_images(data_dict)
-
-    end = time.time()
-    print(sig_spider.success_msg + f"SigSpider execution time: {round(end - start, 2)} seconds.")
-
-    sig_spider.driver.close()
-
-
